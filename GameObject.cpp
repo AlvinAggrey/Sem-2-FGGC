@@ -2,20 +2,17 @@
 
 #include <iostream>
 
-
-enum GameObjectType
-{
-	PLANE,
-	DONUT,
-	CUBE
-};
-
 GameObject::GameObject(string type, Geometry geometry, Material material) : _geometry(geometry), _type(type), _material(material)
 {
 	_parent = nullptr;
-	_position = Vector3();
-	_rotation = Vector3();
-	_scale = Vector3(1.0f, 1.0f, 1.0f);
+	//_position = Vector3();
+	//_rotation = Vector3();
+	//_scale = Vector3(1.0f, 1.0f, 1.0f);
+
+	GetTransform()->SetPosition(Vector3());
+	GetTransform()->SetRotation(Vector3());
+	GetTransform()->SetScale(1.0f, 1.0f, 1.0f);
+
 	_gObjectType = type;
 	
 	_textureRV = nullptr;
@@ -27,10 +24,13 @@ GameObject::~GameObject()
 
 void GameObject::Update(float t)
 {
+	Vector3 mScale = GetTransform()->GetScale();
+	Vector3 mRotation = GetTransform()->GetRotation();
+	Vector3 mPosition = GetTransform()->GetPosition();
 	// Calculate world matrix
-	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotation = XMMatrixRotationX(_rotation.x) * XMMatrixRotationY(_rotation.y) * XMMatrixRotationZ(_rotation.z);
-	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
+	XMMATRIX scale = XMMatrixScaling(/*_scale.x, _scale.y, _scale.z*/mScale.x, mScale.y, mScale.z);
+	XMMATRIX rotation = XMMatrixRotationX(/*_rotation.x*/ mRotation.x) * XMMatrixRotationY(/*_rotation.y*/mRotation.y) * XMMatrixRotationZ(/*_rotation.z*/mRotation.z);
+	XMMATRIX translation = XMMatrixTranslation(/*_position.x, _position.y, _position.z*/mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&_world, scale * rotation * translation);
 	if (GetGameObjectType() == "Cube")
@@ -54,53 +54,4 @@ void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
 	pImmediateContext->IASetIndexBuffer(_geometry.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	pImmediateContext->DrawIndexed(_geometry.numberOfIndices, 0, 0);
-}
-
-//Vector Computations
-float Vector3::Normalize() 
-{
-	return 1.0f;
-}
-
-float Vector3::Magnitude() 
-{
-	return sqrtf((x * x) + (y * y) + (z * z));
-}
-
-Vector3 Vector3::DotProduct(Vector3 vector)
-{ 
-	return Vector3(this->x * vector.x, this->y * vector.y, this->z * vector.z); 
-}
-
-Vector3 Vector3::CrossProduct(Vector3 vector) 
-{
-	return Vector3( (y*vector.z - vector.y * z), (z * vector.x - vector.z * x), (x * vector.y - vector.x * y));
-}
-
-//Vector operators
-void Vector3::operator*=(float scalar)
-{
-	this->x* scalar;
-	this->y* scalar;
-	this->z* scalar;
-}
-void Vector3::operator+=(Vector3 vector)
-{
-	this->x + vector.x;
-	this->y + vector.y;
-	this->z + vector.z;
-}
-Vector3 Vector3::operator+(Vector3 vector)
-{
-	Vector3 sum;
-	sum = Vector3(this->x + vector.x, this->y + vector.y, this->z + vector.z);
-
-	return sum;
-}
-Vector3 Vector3::operator-(Vector3 vector)
-{
-	Vector3 sum;
-	sum = Vector3(this->x - vector.x, this->y - vector.y, this->z - vector.z);
-
-	return sum;
 }

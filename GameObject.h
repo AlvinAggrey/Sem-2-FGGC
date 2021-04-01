@@ -3,7 +3,11 @@
 #include <directxmath.h>
 #include <d3d11_1.h>
 #include <string>
+
 #include "Debug.h"
+#include "Appearance.h"
+#include "Transform.h"
+#include "ParticleModel.h"
 
 using namespace DirectX;
 using namespace std;
@@ -26,32 +30,32 @@ struct Material
 	float specularPower;
 };
 
-struct Vector3
-{
-private:
-	float magnitude = 0;
-public:
-	float x;
-	float y;
-	float z;
-
-	Vector3() = default;
-	Vector3(float x, float y, float z) { this->x = x; this->y = y; this->z = z; }
-	//Copy constructor
-	Vector3(const Vector3& vector) { x = vector.x; y = vector.y; z = vector.z; }
-
-	//computations
-	float Normalize();
-	float Magnitude();
-	Vector3 DotProduct(Vector3 vector);
-	Vector3 CrossProduct(Vector3 vector);
-	
-	//operator overloads
-	void operator*= (float);
-	void operator+= (Vector3);
-	Vector3 operator+ (Vector3);
-	Vector3 operator- (Vector3);
-};
+//struct Vector3
+//{
+//private:
+//	float magnitude = 0;
+//public:
+//	float x;
+//	float y;
+//	float z;
+//
+//	Vector3() = default;
+//	Vector3(float x, float y, float z) { this->x = x; this->y = y; this->z = z; }
+//	//Copy constructor
+//	Vector3(const Vector3& vector) { x = vector.x; y = vector.y; z = vector.z; }
+//
+//	//computations
+//	float Normalize();
+//	float Magnitude();
+//	Vector3 DotProduct(Vector3 vector);
+//	Vector3 CrossProduct(Vector3 vector);
+//	
+//	//operator overloads
+//	void operator*= (float);
+//	void operator+= (Vector3);
+//	Vector3 operator+ (Vector3);
+//	Vector3 operator- (Vector3);
+//};
 
 class GameObject
 {
@@ -59,21 +63,21 @@ public:
 	GameObject(string type, Geometry geometry, Material material);
 	~GameObject();
 
-	// Setters and Getters for position/rotation/scale
-	void SetPosition(Vector3 position) { _position = position; }
-	void SetPosition(float x, float y, float z) { _position.x = x; _position.y = y; _position.z = z; }
+	//// Setters and Getters for position/rotation/scale
+	//void SetPosition(Vector3 position) { _position = position; }
+	//void SetPosition(float x, float y, float z) { _position.x = x; _position.y = y; _position.z = z; }
 
-	Vector3 GetPosition() const { return _position; }
+	//Vector3 GetPosition() const { return _position; }
 
-	void SetScale(Vector3 scale) { _scale = scale; }
-	void SetScale(float x, float y, float z) { _scale.x = x; _scale.y = y; _scale.z = z; }
+	//void SetScale(Vector3 scale) { _scale = scale; }
+	//void SetScale(float x, float y, float z) { _scale.x = x; _scale.y = y; _scale.z = z; }
 
-	Vector3 GetScale() const { return _scale; }
+	//Vector3 GetScale() const { return _scale; }
 
-	void SetRotation(Vector3 rotation) { _rotation = rotation; }
-	void SetRotation(float x, float y, float z) { _rotation.x = x; _rotation.y = y; _rotation.z = z; }
+	//void SetRotation(Vector3 rotation) { _rotation = rotation; }
+	//void SetRotation(float x, float y, float z) { _rotation.x = x; _rotation.y = y; _rotation.z = z; }
 
-	Vector3 GetRotation() const { return _rotation; }
+	//Vector3 GetRotation() const { return _rotation; }
 
 	string GetType() const { return _type; }
 	string GetGameObjectType() { return _gObjectType; }
@@ -83,6 +87,11 @@ public:
 	Material GetMaterial() const { return _material; }
 
 	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
+
+	//get components
+	Appearance* GetAppearance() const { return _appearance; };
+	Transform* GetTransform () const { return _transform; };
+	ParticleModel* GetParticleModel() const { return _particleModel; };
 
 	void SetTextureRV(ID3D11ShaderResourceView * textureRV) { _textureRV = textureRV; }
 	ID3D11ShaderResourceView * GetTextureRV() const { return _textureRV; }
@@ -94,9 +103,13 @@ public:
 	void Draw(ID3D11DeviceContext * pImmediateContext);
 
 private:
-	Vector3 _position;
-	Vector3 _rotation;
-	Vector3 _scale;
+	//Vector3 _position;
+	//Vector3 _rotation;
+	//Vector3 _scale;
+
+	Appearance * _appearance = new Appearance();
+	Transform * _transform = new Transform();
+	ParticleModel * _particleModel = new ParticleModel();
 
 	string _type;
 	string _gObjectType;

@@ -21,6 +21,9 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Appearance.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="ParticleModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp" />
@@ -30,6 +33,8 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ParticleModel.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

@@ -156,9 +156,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	
 	GameObject * gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
-	gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	gameObject->SetScale(15.0f, 15.0f, 15.0f);
-	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
+	gameObject->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
+	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
+	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->SetTextureRV(_pGroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
@@ -166,15 +166,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	for (auto i = 0; i < 3; i++)
 	{
 		gameObject = new GameObject("Cube" + i, cubeGeometry, shinyMaterial);
-		gameObject->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
+		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->SetTextureRV(_pTextureRV);
 
 		_gameObjects.push_back(gameObject);
 	}
 	gameObject = new GameObject("Donut", herculesGeometry, shinyMaterial);
-	gameObject->SetScale(0.5f, 0.5f, 0.5f);
-	gameObject->SetPosition(-4.0f, 0.5f, 10.0f);
+	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+	gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
 	gameObject->SetTextureRV(_pTextureRV);
 	_gameObjects.push_back(gameObject);
 	return S_OK;
@@ -666,16 +666,16 @@ void Application::Cleanup()
 
 void Application::moveForward(int objectNumber)
 {
-	Vector3 position = _gameObjects[objectNumber]->GetPosition();
+	Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
 	position.z -= 0.02f;
-	_gameObjects[objectNumber]->SetPosition(position);
+	_gameObjects[objectNumber]->GetTransform()->SetPosition(position);
 }
 
 void Application::moveBackward(int objectNumber)
 {
-	Vector3 position = _gameObjects[objectNumber]->GetPosition();
+	Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
 	position.z += 0.02f;
-	_gameObjects[objectNumber]->SetPosition(position);
+	_gameObjects[objectNumber]->GetTransform()->SetPosition(position);
 }
 
 void Application::Update()
