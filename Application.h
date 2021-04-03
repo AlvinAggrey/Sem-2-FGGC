@@ -141,7 +141,7 @@ private:
 	void moveBackward(int objectNumber);
 
 public:
-	#define NUMBER_OF_CUBES 1
+	#define NUMBER_OF_CUBES 5
 	#define FPS_60 1.0f/60.0f
 
 	Application();
