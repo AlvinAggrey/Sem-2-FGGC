@@ -5,7 +5,6 @@ struct Vector3
 private:
 	float magnitude = 0;
 
-
 public:
 	float x = 0;
 	float y = 0;
