@@ -24,6 +24,9 @@
     <ClInclude Include="Appearance.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="ParticleModel.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp" />

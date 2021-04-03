@@ -2,20 +2,19 @@
 
 #include <iostream>
 
-GameObject::GameObject(string type, Geometry geometry, Material material) : _geometry(geometry), _type(type), _material(material)
+GameObject::GameObject(string type, Geometry geometry, Material material) : _type(type)
 {
 	_parent = nullptr;
-	//_position = Vector3();
-	//_rotation = Vector3();
-	//_scale = Vector3(1.0f, 1.0f, 1.0f);
 
-	GetTransform()->SetPosition(Vector3());
-	GetTransform()->SetRotation(Vector3());
-	GetTransform()->SetScale(1.0f, 1.0f, 1.0f);
+	_transform->SetPosition(Vector3());
+	_transform->SetRotation(Vector3());
+	_transform->SetScale(1.0f, 1.0f, 1.0f);
 
 	_gObjectType = type;
 	
-	_textureRV = nullptr;
+	//_textureRV = nullptr;
+	_appearance->SetGeometryData(geometry);
+	_appearance->SetMaterial(material);
 }
 
 GameObject::~GameObject()
@@ -48,10 +47,10 @@ void GameObject::Update(float t)
 void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
 {
 	// NOTE: We are assuming that the constant buffers and all other draw setup has already taken place
-
+	Geometry mAppearance = GetAppearance()->GetGeometryData();
 	// Set vertex and index buffers
-	pImmediateContext->IASetVertexBuffers(0, 1, &_geometry.vertexBuffer, &_geometry.vertexBufferStride, &_geometry.vertexBufferOffset);
-	pImmediateContext->IASetIndexBuffer(_geometry.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	pImmediateContext->IASetVertexBuffers(0, 1, &mAppearance.vertexBuffer, &mAppearance.vertexBufferStride, &mAppearance.vertexBufferOffset);
+	pImmediateContext->IASetIndexBuffer(mAppearance.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	pImmediateContext->DrawIndexed(_geometry.numberOfIndices, 0, 0);
+	pImmediateContext->DrawIndexed(mAppearance.numberOfIndices, 0, 0);
 }
