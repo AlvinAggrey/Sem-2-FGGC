@@ -1,4 +1,4 @@
-#include "Transform.h"
+#include "Vector3.h"
 
 //Vector Computations
 float Vector3::Normalize()
@@ -47,4 +47,12 @@ Vector3 Vector3::operator-(Vector3 vector)
 	sum = Vector3(this->x - vector.x, this->y - vector.y, this->z - vector.z);
 
 	return sum;
+}
+
+Vector3 Vector3::operator*(float scalar)
+{
+	Vector3 product;
+	product = Vector3(this->x * scalar, this->y * scalar, this->z * scalar);
+	
+	return product;
 }

@@ -7,6 +7,6 @@
 class Debug
 {
 public:
-	static void OutputLog(std::string message);
+	void OutputLog(std::string message);
+	
 };
-

@@ -165,7 +165,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	for (auto i = 0; i < NUMBER_OF_CUBES; i++)
 	{
-		gameObject = new GameObject("Cube" + i, cubeGeometry, shinyMaterial);
+		gameObject = new GameObject(("Cube" + to_string(i)), cubeGeometry, shinyMaterial);
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
@@ -619,49 +619,49 @@ HRESULT Application::InitDevice()
 void Application::Cleanup()
 {
     if (_pImmediateContext) _pImmediateContext->ClearState();
-	if (_pSamplerLinear) _pSamplerLinear->Release();
+if (_pSamplerLinear) _pSamplerLinear->Release();
 
-	if (_pTextureRV) _pTextureRV->Release();
+if (_pTextureRV) _pTextureRV->Release();
 
-	if (_pGroundTextureRV) _pGroundTextureRV->Release();
+if (_pGroundTextureRV) _pGroundTextureRV->Release();
 
-    if (_pConstantBuffer) _pConstantBuffer->Release();
+if (_pConstantBuffer) _pConstantBuffer->Release();
 
-    if (_pVertexBuffer) _pVertexBuffer->Release();
-    if (_pIndexBuffer) _pIndexBuffer->Release();
-	if (_pPlaneVertexBuffer) _pPlaneVertexBuffer->Release();
-	if (_pPlaneIndexBuffer) _pPlaneIndexBuffer->Release();
+if (_pVertexBuffer) _pVertexBuffer->Release();
+if (_pIndexBuffer) _pIndexBuffer->Release();
+if (_pPlaneVertexBuffer) _pPlaneVertexBuffer->Release();
+if (_pPlaneIndexBuffer) _pPlaneIndexBuffer->Release();
 
-    if (_pVertexLayout) _pVertexLayout->Release();
-    if (_pVertexShader) _pVertexShader->Release();
-    if (_pPixelShader) _pPixelShader->Release();
-    if (_pRenderTargetView) _pRenderTargetView->Release();
-    if (_pSwapChain) _pSwapChain->Release();
-    if (_pImmediateContext) _pImmediateContext->Release();
-    if (_pd3dDevice) _pd3dDevice->Release();
-	if (_depthStencilView) _depthStencilView->Release();
-	if (_depthStencilBuffer) _depthStencilBuffer->Release();
+if (_pVertexLayout) _pVertexLayout->Release();
+if (_pVertexShader) _pVertexShader->Release();
+if (_pPixelShader) _pPixelShader->Release();
+if (_pRenderTargetView) _pRenderTargetView->Release();
+if (_pSwapChain) _pSwapChain->Release();
+if (_pImmediateContext) _pImmediateContext->Release();
+if (_pd3dDevice) _pd3dDevice->Release();
+if (_depthStencilView) _depthStencilView->Release();
+if (_depthStencilBuffer) _depthStencilBuffer->Release();
 
-	if (DSLessEqual) DSLessEqual->Release();
-	if (RSCullNone) RSCullNone->Release();
+if (DSLessEqual) DSLessEqual->Release();
+if (RSCullNone) RSCullNone->Release();
 
-	if (CCWcullMode) CCWcullMode->Release();
-	if (CWcullMode) CWcullMode->Release();
+if (CCWcullMode) CCWcullMode->Release();
+if (CWcullMode) CWcullMode->Release();
 
-	if (_camera)
+if (_camera)
+{
+	delete _camera;
+	_camera = nullptr;
+}
+
+for (auto gameObject : _gameObjects)
+{
+	if (gameObject)
 	{
-		delete _camera;
-		_camera = nullptr;
+		delete gameObject;
+		gameObject = nullptr;
 	}
-
-	for (auto gameObject : _gameObjects)
-	{
-		if (gameObject)
-		{
-			delete gameObject;
-			gameObject = nullptr;
-		}
-	}
+}
 }
 
 void Application::moveForward(int objectNumber)
@@ -680,24 +680,24 @@ void Application::moveBackward(int objectNumber)
 
 void Application::Update()
 {
-    // Update our time
-    static float deltaTime = 0.0f;
-    static DWORD dwTimeStart = 0;
 
-    DWORD dwTimeCur = GetTickCount64();
+	// Update our time
+	static float deltaTime = 0.0f;
+	static DWORD dwTimeStart = 0;
 
-    if (dwTimeStart == 0)
-        dwTimeStart = dwTimeCur;
+	DWORD dwTimeCur = GetTickCount64();
+
+	if (dwTimeStart == 0)
+		dwTimeStart = dwTimeCur;
+
 
 	//deltaTime = (dwTimeCur - dwTimeStart) / 1000.0f;
 	deltaTime += (dwTimeCur - dwTimeStart) / 1000.0f;
 
-	deltaTime += (dwTimeCur - dwTimeStart) / 1000.0f;
+	//deltaTime += (dwTimeCur - dwTimeStart) / 1000.0f;
 	if (deltaTime < FPS_60) {
 		return;
 	}
-
-
 
 	// Move gameobject
 	if (GetAsyncKeyState('1'))
@@ -711,12 +711,24 @@ void Application::Update()
 
 	if (GetAsyncKeyState('3'))
 	{
-		moveBackward(6);
+		moveBackward(1);
 	}
 	if (GetAsyncKeyState('4'))
 	{
 		moveBackward(2);
 	}
+
+	if (GetKeyState('1') & 0x8000 && keyPressed == false)
+	{
+		keyPressed = true;
+		debug.OutputLog("Key 1 pressed");
+	}
+	else if (GetAsyncKeyState('1') == 0)
+	{
+		keyPressed = false;
+	}
+
+
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 
@@ -730,19 +742,18 @@ void Application::Update()
 	_camera->SetPosition(cameraPos);
 	_camera->Update();
 
-	for (int objectNumber = 0; objectNumber <=_gameObjects.size(); objectNumber++)
-	{
-		//_gameObjects[objectNumber]->Update(timeSinceStart);
-	}
-
-
-	// Update objects
 	for (auto gameObject : _gameObjects)
 	{
+		debug.OutputLog(to_string(deltaTime));
 		gameObject->Update(deltaTime);
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}
 
+
+	dwTimeStart = dwTimeCur;
+	
+	//to make sure every frame comes out on time
+	// if set to zero frames will not come out when they're supposed to
 	deltaTime = deltaTime - FPS_60;
 }
 

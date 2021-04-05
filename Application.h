@@ -140,9 +140,14 @@ private:
 	void moveForward(int objectNumber);
 	void moveBackward(int objectNumber);
 
+	Debug debug;
+	bool keyPressed = false;
+
 public:
 	#define NUMBER_OF_CUBES 5
 	#define FPS_60 1.0f/60.0f
+	//#define FPS_60 25.0f
+
 
 	Application();
 	~Application();

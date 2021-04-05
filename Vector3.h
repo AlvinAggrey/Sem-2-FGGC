@@ -1,4 +1,5 @@
 #pragma once
+#include <corecrt_math.h>
 
 struct Vector3
 {
@@ -23,7 +24,9 @@ public:
 
 	//operator overloads
 	void operator*= (float);
+
 	void operator+= (Vector3);
 	Vector3 operator+ (Vector3);
 	Vector3 operator- (Vector3);
+	Vector3 operator* (float);
 };

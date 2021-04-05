@@ -41,7 +41,7 @@ public:
 private:
 	Appearance * _appearance = new Appearance();
 	Transform * _transform = new Transform();
-	ParticleModel * _particleModel = new ParticleModel();
+	ParticleModel * _particleModel = new ParticleModel(_transform);
 
 	string _type;
 	string _gObjectType;
