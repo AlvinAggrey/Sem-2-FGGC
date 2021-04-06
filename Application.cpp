@@ -744,12 +744,15 @@ void Application::Update()
 
 	for (auto gameObject : _gameObjects)
 	{
-		debug.OutputLog(to_string(deltaTime));
+
 		gameObject->Update(deltaTime);
+;
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}
 
-
+	debug.OutputLog(to_string(deltaTime));
+	string message = (to_string(_gameObjects[2]->GetParticleModel()->GetVelocity().z));
+	debug.OutputLog(message);
 	dwTimeStart = dwTimeCur;
 	
 	//to make sure every frame comes out on time

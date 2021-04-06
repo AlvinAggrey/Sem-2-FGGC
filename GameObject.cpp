@@ -18,7 +18,8 @@ GameObject::GameObject(string type, Geometry geometry, Material material) : _typ
 
 	size_t found = _gObjectType.find("Cube");
 	if (found != string::npos)
-		_particleModel->SetVelocity(0, 0, 0.000001f);
+		//_particleModel->SetVelocity(0, 0, 0.1);
+		_particleModel->SetAccelaration(0, 0, 5);
 }
 
 GameObject::~GameObject()
@@ -37,12 +38,13 @@ void GameObject::Update(float t)
 	XMMATRIX rotation = XMMatrixRotationX(/*_rotation.x*/ mRotation.x) * XMMatrixRotationY(/*_rotation.y*/mRotation.y) * XMMatrixRotationZ(/*_rotation.z*/mRotation.z);
 	XMMATRIX translation = XMMatrixTranslation(/*_position.x, _position.y, _position.z*/mPosition.x, mPosition.y, mPosition.z);
 
+	_particleModel->Update(t);
 	XMStoreFloat4x4(&_world, scale * rotation * translation);
 	if (GetGameObjectType() == "Cube")
 	{
+		_particleModel->SetVelocity(0, 0, 25);
 	}
-	char message = (t);
-	debug.OutputLog(std::to_string(t));
+
 	if (_parent != nullptr)
 	{
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());

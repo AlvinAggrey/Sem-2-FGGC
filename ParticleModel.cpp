@@ -35,20 +35,28 @@ void ParticleModel::SetAccelaration(float x, float y, float z)
 
 void ParticleModel::Update(float t)
 {
-	moveConstVelocity(t);
+	if (_movementType == Velocity)
+	{
+		moveConstVelocity(t);
+	}
+	else if (_movementType == Accelaration)
+	{
+		moveConstAcceleration(t);
+	}
+
 }
 
 void ParticleModel::moveConstVelocity(const float deltaTime)
 {
-	Vector3 position = _transform->GetPosition() + _velocity * deltaTime;
-	_transform->SetPosition(position);
+	//Vector3 position = _transform->GetPosition() + _velocity * deltaTime;
+	_transform->SetPosition(_transform->GetPosition() + (_velocity * deltaTime));
 }
 
 void ParticleModel::moveConstAcceleration(const float deltaTime)
 {
 	//changed code slightly because it made more sense to do it like this
-	Vector3 position = _transform->GetPosition() + (_velocity * deltaTime);
+	//Vector3 position = _transform->GetPosition() + (_velocity * deltaTime);
 
-	_transform->SetPosition(position);
+	_transform->SetPosition(_transform->GetPosition() + (_velocity * deltaTime));
 	_velocity = _velocity + (_accelaration * deltaTime);
 }
