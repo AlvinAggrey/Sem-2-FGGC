@@ -40,11 +40,6 @@ void GameObject::Update(float t)
 
 	_particleModel->Update(t);
 	XMStoreFloat4x4(&_world, scale * rotation * translation);
-	if (GetGameObjectType() == "Cube")
-	{
-		_particleModel->SetVelocity(0, 0, 25);
-	}
-
 	if (_parent != nullptr)
 	{
 		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());

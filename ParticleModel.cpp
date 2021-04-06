@@ -17,6 +17,16 @@ void ParticleModel::SetVelocity(float x, float y, float z)
 	_velocity.z = z;
 }
 
+bool ParticleModel::GetUsingConstAccel()
+{
+	return _usingConstAccel;
+}
+
+void ParticleModel::SetUsingConstAccel(bool usingConstAccel)
+{
+	_usingConstAccel = usingConstAccel;
+}
+
 Vector3 ParticleModel::GetAccelaration()
 {
 	return _velocity;
@@ -35,11 +45,11 @@ void ParticleModel::SetAccelaration(float x, float y, float z)
 
 void ParticleModel::Update(float t)
 {
-	if (_movementType == Velocity)
+	if (_usingConstAccel == false)
 	{
 		moveConstVelocity(t);
 	}
-	else if (_movementType == Accelaration)
+	else if (_usingConstAccel)
 	{
 		moveConstAcceleration(t);
 	}
