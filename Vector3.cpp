@@ -22,17 +22,27 @@ Vector3 Vector3::CrossProduct(Vector3 vector)
 }
 
 //Vector operators
-void Vector3::operator*=(float scalar)
+Vector3 Vector3::operator*=(float scalar)
 {
-	this->x* scalar;
-	this->y* scalar;
-	this->z* scalar;
+	this->x *= scalar;
+	this->y *= scalar;
+	this->z *= scalar;
+	return *this;
 }
-void Vector3::operator+=(Vector3 vector)
+Vector3 Vector3::operator*=(Vector3 vector)
 {
-	this->x + vector.x;
-	this->y + vector.y;
-	this->z + vector.z;
+	this->x *= vector.x;
+	this->y *= vector.y;
+	this->z *= vector.z;
+	return *this;
+}
+Vector3 Vector3::operator+=(Vector3 vector)
+{
+	this->x += vector.x;
+	this->y += vector.y;
+	this->z += vector.z;
+
+	return *this;
 }
 Vector3 Vector3::operator+(Vector3 vector)
 {
@@ -53,6 +63,13 @@ Vector3 Vector3::operator*(float scalar)
 {
 	Vector3 product;
 	product = Vector3(this->x * scalar, this->y * scalar, this->z * scalar);
+	
+	return product;
+}
+Vector3 Vector3::operator*(Vector3 vector)
+{
+	Vector3 product;
+	product = Vector3(this->x * product.x, this->y * product.y, this->z * product.z);
 	
 	return product;
 }

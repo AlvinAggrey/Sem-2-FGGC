@@ -1,7 +1,7 @@
 #pragma once
 #include <corecrt_math.h>
 
-struct Vector3
+class Vector3
 {
 private:
 	float magnitude = 0;
@@ -23,10 +23,13 @@ public:
 	Vector3 CrossProduct(Vector3 vector);
 
 	//operator overloads
-	void operator*= (float);
+	Vector3 operator*= (float);
 
-	void operator+= (Vector3);
+	Vector3 operator*=(Vector3 vector);
+
+	Vector3 operator+= (Vector3);
 	Vector3 operator+ (Vector3);
 	Vector3 operator- (Vector3);
 	Vector3 operator* (float);
+	Vector3 operator* (Vector3);
 };

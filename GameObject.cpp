@@ -17,9 +17,9 @@ GameObject::GameObject(string type, Geometry geometry, Material material) : _typ
 	_appearance->SetMaterial(material);
 
 	size_t found = _gObjectType.find("Cube");
-	if (found != string::npos)
+	//if (found != string::npos)
 		//_particleModel->SetVelocity(0, 0, 0.1);
-		_particleModel->SetAccelaration(0, 0, 5);
+		//_particleModel->SetAccelaration(0, 0, 5);
 }
 
 GameObject::~GameObject()

@@ -128,6 +128,16 @@ private:
 	ID3D11RasterizerState* CCWcullMode;
 	ID3D11RasterizerState* CWcullMode;
 
+	Geometry herculesGeometry;
+
+	Geometry cubeGeometry;
+
+	Geometry planeGeometry;
+
+	Material shinyMaterial;
+
+	Material noSpecMaterial;
+
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
@@ -144,7 +154,7 @@ private:
 	bool keyPressed = false;
 
 public:
-	#define NUMBER_OF_CUBES 5
+	#define NUMBER_OF_CUBES 1
 	#define FPS_60 1.0f/60.0f
 	//#define FPS_60 25.0f
 

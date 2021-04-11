@@ -119,7 +119,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	basicLight.SpecularPower = 20.0f;
 	basicLight.LightVecW = XMFLOAT3(0.0f, 1.0f, -1.0f);
 
-	Geometry herculesGeometry;
+	//Geometry herculesGeometry;
 	objMeshData = OBJLoader::Load("donut.obj", _pd3dDevice);
 	herculesGeometry.indexBuffer = objMeshData.IndexBuffer;
 	herculesGeometry.numberOfIndices = objMeshData.IndexCount;
@@ -127,27 +127,27 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	herculesGeometry.vertexBufferOffset = objMeshData.VBOffset;
 	herculesGeometry.vertexBufferStride = objMeshData.VBStride;
 	
-	Geometry cubeGeometry;
+	//Geometry cubeGeometry;
 	cubeGeometry.indexBuffer = _pIndexBuffer;
 	cubeGeometry.vertexBuffer = _pVertexBuffer;
 	cubeGeometry.numberOfIndices = 36;
 	cubeGeometry.vertexBufferOffset = 0;
 	cubeGeometry.vertexBufferStride = sizeof(SimpleVertex);
 
-	Geometry planeGeometry;
+	//Geometry planeGeometry;
 	planeGeometry.indexBuffer = _pPlaneIndexBuffer;
 	planeGeometry.vertexBuffer = _pPlaneVertexBuffer;
 	planeGeometry.numberOfIndices = 6;
 	planeGeometry.vertexBufferOffset = 0;
 	planeGeometry.vertexBufferStride = sizeof(SimpleVertex);
 
-	Material shinyMaterial;
+	//Material shinyMaterial;
 	shinyMaterial.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	shinyMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	shinyMaterial.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	shinyMaterial.specularPower = 10.0f;
 
-	Material noSpecMaterial;
+	//Material noSpecMaterial;
 	noSpecMaterial.ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	noSpecMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -155,13 +155,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 
 	
-	GameObject * gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
+	GameObject * gameObject;
+	/*GameObject * gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
 	gameObject->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
 
-	_gameObjects.push_back(gameObject);
+	_gameObjects.push_back(gameObject);*/
 
 	for (auto i = 0; i < NUMBER_OF_CUBES; i++)
 	{
@@ -172,11 +173,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 		_gameObjects.push_back(gameObject);
 	}
-	gameObject = new GameObject("Donut", herculesGeometry, shinyMaterial);
-	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-	gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
-	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
-	_gameObjects.push_back(gameObject);
+	//gameObject = new GameObject("Donut", herculesGeometry, shinyMaterial);
+	//gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+	//gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
+	//gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	//_gameObjects.push_back(gameObject);
 	return S_OK;
 }
 
@@ -666,9 +667,11 @@ for (auto gameObject : _gameObjects)
 
 void Application::moveForward(int objectNumber)
 {
-	Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
-	position.z -= 0.02f;
-	_gameObjects[objectNumber]->GetTransform()->SetPosition(position);
+	//Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
+	//position.z -= 0.02f;
+/*	_gameObjects[objectNumber]->GetTransform()->SetPosition(position)*/;
+	Vector3 thrust = _gameObjects[objectNumber]->GetParticleModel()->GetThrust();
+	_gameObjects[objectNumber]->GetParticleModel()->SetThrust(thrust + Vector3(0,0,1));
 }
 
 void Application::moveBackward(int objectNumber)
@@ -702,28 +705,59 @@ void Application::Update()
 	// Move gameobject
 	if (GetAsyncKeyState('1'))
 	{
-		moveForward(1);
+		//moveForward(0);
 	}
 	if (GetAsyncKeyState('2'))
 	{
-		moveForward(2);
+		//moveForward(2);
 	}
 
 	if (GetAsyncKeyState('3'))
 	{
-		moveBackward(1);
+		//moveBackward(1);
 	}
 	if (GetAsyncKeyState('4'))
 	{
 		moveBackward(2);
 	}
 
-	if (GetKeyState('1') & 0x8000 && keyPressed == false)
+	//if (GetKeyState('1') & 0x8000)
+	//{
+	//	keyPressed = true;
+	//	debug.OutputLog("Key 1 pressed");
+	//}
+	Vector3 thrust = _gameObjects[0]->GetParticleModel()->GetThrust();
+	Vector3 velocity = _gameObjects[0]->GetParticleModel()->GetVelocity();
+
+	if (GetKeyState('1') & 0x0001)
+	{
+
+		_gameObjects[0]->GetParticleModel()->SetThrust(Vector3(-0.5, 0, 0));
+	}
+	else
+	{
+		_gameObjects[0]->GetParticleModel()->SetThrust(Vector3(0, 0, 0));
+	}
+	if (GetKeyState('2') & 0x0001)
+	{
+		_gameObjects[0]->GetParticleModel()->SetVelocity(thrust * Vector3(0, 0, 0.1));
+	}
+
+	GameObject * gameObject;
+	if (GetKeyState('3') & 0x8000 && keyPressed == false)
 	{
 		keyPressed = true;
 		debug.OutputLog("Key 1 pressed");
+		gameObject = new GameObject(("Cube"), cubeGeometry, shinyMaterial);
+		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+		gameObject->GetTransform()->SetPosition(0.0f, 0.0f, 10.0f);
+		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+
+		gameObject->GetParticleModel()->SetThrust(Vector3(0, 250, 250));
+
+		_gameObjects.push_back(gameObject);
 	}
-	else if (GetAsyncKeyState('1') == 0)
+	else if (GetAsyncKeyState('3') == 0)
 	{
 		keyPressed = false;
 	}
@@ -746,13 +780,12 @@ void Application::Update()
 	{
 
 		gameObject->Update(deltaTime);
-;
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}
 
-	debug.OutputLog(to_string(deltaTime));
-	string message = (to_string(_gameObjects[2]->GetParticleModel()->GetVelocity().z));
-	debug.OutputLog(message);
+	//debug.OutputLog(to_string(deltaTime));
+	/*string message = (to_string(_gameObjects[0]->GetParticleModel()->GetAcceleration().z));
+	debug.OutputLog(message)*/;
 	dwTimeStart = dwTimeCur;
 	
 	//to make sure every frame comes out on time
