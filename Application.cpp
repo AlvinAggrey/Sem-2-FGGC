@@ -670,8 +670,7 @@ void Application::moveForward(int objectNumber)
 	//Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
 	//position.z -= 0.02f;
 /*	_gameObjects[objectNumber]->GetTransform()->SetPosition(position)*/;
-	Vector3 thrust = _gameObjects[objectNumber]->GetParticleModel()->GetThrust();
-	_gameObjects[objectNumber]->GetParticleModel()->SetThrust(thrust + Vector3(0,0,1));
+	_gameObjects[objectNumber]->GetParticleModel()->SetThrust(Vector3(0,0,1));
 }
 
 void Application::moveBackward(int objectNumber)
@@ -721,14 +720,6 @@ void Application::Update()
 		moveBackward(2);
 	}
 
-	//if (GetKeyState('1') & 0x8000)
-	//{
-	//	keyPressed = true;
-	//	debug.OutputLog("Key 1 pressed");
-	//}
-	Vector3 thrust = _gameObjects[0]->GetParticleModel()->GetThrust();
-	Vector3 velocity = _gameObjects[0]->GetParticleModel()->GetVelocity();
-
 	if (GetKeyState('1') & 0x0001)
 	{
 
@@ -738,9 +729,10 @@ void Application::Update()
 	{
 		_gameObjects[0]->GetParticleModel()->SetThrust(Vector3(0, 0, 0));
 	}
+
 	if (GetKeyState('2') & 0x0001)
 	{
-		_gameObjects[0]->GetParticleModel()->SetVelocity(thrust * Vector3(0, 0, 0.1));
+		_gameObjects[0]->GetParticleModel()->SetVelocity(Vector3(0, 0, 0.1));
 	}
 
 	GameObject * gameObject;

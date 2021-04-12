@@ -1,9 +1,9 @@
 #include "Vector3.h"
 
 //Vector Computations
-float Vector3::Normalize()
+Vector3 Vector3::Normalise()
 {
-	return 1.0f;
+	return Vector3(x / magnitude , y / magnitude, z / magnitude);
 }
 
 float Vector3::Magnitude()

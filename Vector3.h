@@ -4,7 +4,7 @@
 class Vector3
 {
 private:
-	float magnitude = 0;
+	float magnitude = sqrtf((x * x) + (y * y) + (z * z));
 
 public:
 	float x = 0;
@@ -17,7 +17,7 @@ public:
 	Vector3(const Vector3& vector) { x = vector.x; y = vector.y; z = vector.z; }
 
 	//computations
-	float Normalize();
+	Vector3 Normalise();
 	float Magnitude();
 	Vector3 DotProduct(Vector3 vector);
 	Vector3 CrossProduct(Vector3 vector);

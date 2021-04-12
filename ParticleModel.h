@@ -14,6 +14,7 @@ private:
 	//forces
 	Vector3 _thrust;
 	float _friction;
+	float _dragFactor = 0.5;
 	Vector3 _drag;
 	Vector3 _brakeForces;
 	Vector3 _weight;
@@ -22,7 +23,8 @@ private:
 
 	float _airFriction = 0.5;
 
-	bool _usingConstAccel;
+	bool _useConstAccel;
+	bool _useLaminar;
 	bool _useThrust;
 	float _mass;
 	Debug debug;
@@ -32,7 +34,7 @@ public:
 	ParticleModel(Transform* transform, float mass, bool useConstAccel, Vector3 initVelocity, Vector3 initAcceleration) 
 	{
 		_transform = transform;
-		_usingConstAccel = useConstAccel;
+		_useConstAccel = useConstAccel;
 		_velocity = initVelocity;
 		_acceleration = initAcceleration;
 		_mass = mass;
@@ -60,6 +62,10 @@ public:
 	Vector3 GetDrag();
 	void SetDrag();
 
+	void DragForce(Vector3 velocity, float dragFactor);
+	void DragLamFlow(Vector3 velocity, float dragFactor);
+	void DragTurbFlow(Vector3 velocity, float dragFactor);
+
 	//Brake forces
 	Vector3 GetBrakeForces();
 	void SetBrakeForces(Vector3 brakeForces);
@@ -72,7 +78,7 @@ public:
 
 	//Acceleration
 	bool GetUsingConstAccel();
-	void SetUsingConstAccel(bool usingConstAccel);
+	void SetUsingConstAccel(bool useConstAccel);
 
 	Vector3 GetAcceleration();
 	void SetAcceleration(Vector3 accelaration);

@@ -31,6 +31,39 @@ void ParticleModel::SetThrust(float x, float y, float z)
 	_thrust = Vector3(x, y, z);
 	_useThrust = true;
 }
+
+void ParticleModel::DragForce(Vector3 velocity, float dragFactor)
+{
+	if (_useLaminar)
+	{
+		// calculate drag force for laminar flow
+		DragLamFlow(velocity, dragFactor);
+	}
+
+	else
+	{
+		// calculate drag force for turbulent flow
+		DragTurbFlow(velocity, dragFactor);
+	}
+}
+void ParticleModel::DragLamFlow(Vector3 velocity, float dragFactor)
+{
+	_drag = velocity * -dragFactor;
+}
+void ParticleModel::DragTurbFlow(Vector3 velocity, float dragFactor)
+{
+	// calculate magnitude of velocity
+	float velMag = velocity.Magnitude();
+	// calculate unit vector of velocity
+	Vector3 unitVel = velocity.Normalise();
+
+	// calculate magnitude of drag force
+	float dragMag = dragFactor * velMag * velMag;
+
+	// calculate of x- and y-components of drag force
+	_drag = unitVel * -dragMag;
+}
+
 Vector3 ParticleModel::GetBrakeForces()
 {
 	return _brakeForces;
@@ -63,12 +96,12 @@ void ParticleModel::SetVelocity(float x, float y, float z)
 
 bool ParticleModel::GetUsingConstAccel()
 {
-	return _usingConstAccel;
+	return _useConstAccel;
 }
 
 void ParticleModel::SetUsingConstAccel(bool usingConstAccel)
 {
-	_usingConstAccel = usingConstAccel;
+	_useConstAccel = usingConstAccel;
 }
 
 Vector3 ParticleModel::GetAcceleration()
@@ -90,8 +123,9 @@ void ParticleModel::SetAcceleration(float x, float y, float z)
 void ParticleModel::UpdateNetForce()
 {
 	_netForce = Vector3(0,0,0);
-	_drag = _velocity * 0.5 * -1;
+	//_drag = _velocity * _dragFactor * -1;
 	
+	DragForce(_velocity, _dragFactor);
 	//apply thrust this frame?
 	if (_useThrust)
 	{
@@ -106,11 +140,13 @@ void ParticleModel::UpdateNetForce()
 	_netForce += _drag -_weight;
 
 
-	debug.OutputLog("_netForce X: " + to_string(_netForce.x) + " Y: " + to_string(_netForce.y) + " Z: " + to_string(_netForce.z));
-	debug.OutputLog("position X: " + to_string(_transform->GetPosition().x) + " Y: " + to_string(_transform->GetPosition().y) + " Z: " + to_string(_transform->GetPosition().z));
-	debug.OutputLog("acceleration X: " + to_string(_acceleration.x) + " Y: " + to_string(_acceleration.y) + " Z: " + to_string(_acceleration.z));
-	debug.OutputLog("velocity X: " + to_string(_velocity.x) + " Y: " + to_string(_velocity.y) + " Z: " + to_string(_velocity.z));
+	debug.OutputLog("Magnitude: " + to_string(_transform->GetPosition().Magnitude()));
+	//debug.OutputLog("_netForce X: " + to_string(_netForce.x) + " Y: " + to_string(_netForce.y) + " Z: " + to_string(_netForce.z));
+	//debug.OutputLog("position X: " + to_string(_transform->GetPosition().x) + " Y: " + to_string(_transform->GetPosition().y) + " Z: " + to_string(_transform->GetPosition().z));
+	//debug.OutputLog("acceleration X: " + to_string(_acceleration.x) + " Y: " + to_string(_acceleration.y) + " Z: " + to_string(_acceleration.z));
+	//debug.OutputLog("velocity X: " + to_string(_velocity.x) + " Y: " + to_string(_velocity.y) + " Z: " + to_string(_velocity.z));
 }
+
 void ParticleModel::UpdateAccel()
 {
 	_acceleration.x = _netForce.x / _mass;
@@ -124,11 +160,11 @@ void ParticleModel::Update(float t)
 {
 	UpdateNetForce();
 	UpdateAccel();
-	if (_usingConstAccel == false)
+	if (_useConstAccel == false)
 	{
 		moveConstVelocity(t);
 	}
-	else if (_usingConstAccel)
+	else if (_useConstAccel)
 	{
 		moveConstAcceleration(t);
 	}
