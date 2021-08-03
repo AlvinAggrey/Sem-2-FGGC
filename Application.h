@@ -154,7 +154,7 @@ private:
 	bool keyPressed = false;
 
 public:
-	#define NUMBER_OF_CUBES 1
+	#define NUMBER_OF_CUBES 3
 	#define FPS_60 1.0f/60.0f
 	//#define FPS_60 25.0f
 

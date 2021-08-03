@@ -371,6 +371,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Debug.cpp" />
@@ -390,6 +391,7 @@
   <ItemGroup>
     <ClInclude Include="Appearance.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Debug.h" />

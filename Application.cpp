@@ -161,6 +161,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
+	gameObject->GetParticleModel()->UseBBox(-15, 15, -15, 15, -1, 1);
 
 	_gameObjects.push_back(gameObject);
 
@@ -768,17 +769,23 @@ void Application::Update()
 	_camera->SetPosition(cameraPos);
 	_camera->Update();
 
-	for (auto gameObject : _gameObjects)
+	for (auto gameObjectOutter : _gameObjects)
 	{
 
-		gameObject->Update(deltaTime);
-		for (int i = 0; i < _gameObjects.size(); i++)
+		gameObjectOutter->Update(deltaTime);
+		for (auto gameObjectInner : _gameObjects)
 		{
-			if (_gameObjects[i] == gameObject)
+			if (gameObjectInner == gameObjectOutter)
 			{
 				continue;
 			}
-			gameObject->GetParticleModel()->CollisionCheck(_gameObjects[i]->, _gameObjects[i]->GetParticleModel()->GetBoundingSphereRadius());
+
+			if (gameObjectOutter->GetParticleModel()->CollisionCheck(gameObjectInner->GetTransform()->GetPosition(), gameObjectInner->GetParticleModel()->GetBoundingSphereRadius()))
+			{
+				debug.OutputLog("Touching");
+			}
+			//string message = (to_string());
+			
 		}
 		//gameObject->CollisionCheck();
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}

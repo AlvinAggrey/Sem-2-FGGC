@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Transform.h"
 #include "Debug.h"
+#include "Box.h"
 
 class ParticleModel
 {
@@ -12,7 +13,9 @@ private:
 	Vector3 _netForce;
 
 	//Collision Detection
+	bool _useBBox, _useBSphere;
 	float _boundingSphereRadius = 1;
+	Box _bBox = Box();
 
 	//forces
 	Vector3 _thrust;
@@ -44,22 +47,24 @@ public:
 		_weight = Vector3(0, _mass * _gravity, 0);
 		_upForce = _weight;
 	};
+
 	//Collision Detection
-	void SetBoundingSphereRadius(float radius);
-	void SetBoundingBox();
+	void SetBSphereRadius(float radius);
+	void SetBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ);
 
 	float GetBoundingSphereRadius();
-	void GetBoundingBox();
+	Box& GetBBox();
 
-	void UseBoundingBox();
-	void UseBoundingSphere(float radius);
-
+	void UseBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ);
+	void UseBSphere(float radius);
+	
 	bool CollisionCheck(Vector3 position, float radius);
-	//Mass
+	bool CollisionCheck(Vector3 position, float bMinX, float bMaxX, float bMinY, float bMaxY);
+	
+	//Physics
 	float GetMass();
 	void SetMass(float mass);
 
-	//Thrust
 	Vector3 GetThrust();
 
 	//void useThrust(bool useThrust);
@@ -67,11 +72,9 @@ public:
 	void SetThrust(Vector3 thrust);
 	void SetThrust(float x, float y, float z);
 
-	//Friction
 	float GetFriction();
 	void SetFriction();
 	
-	//Drag
 	Vector3 GetDrag();
 	void SetDrag();
 
@@ -79,17 +82,14 @@ public:
 	void DragLamFlow(Vector3 velocity, float dragFactor);
 	void DragTurbFlow(Vector3 velocity, float dragFactor);
 
-	//Brake forces
 	Vector3 GetBrakeForces();
 	void SetBrakeForces(Vector3 brakeForces);
 	void SetBrakeForces(float x, float y, float z);
 
-	//Velocity
 	Vector3 GetVelocity();
 	void SetVelocity(Vector3 velocity);
 	void SetVelocity(float x, float y, float z);
 
-	//Acceleration
 	bool GetUsingConstAccel();
 	void SetUsingConstAccel(bool useConstAccel);
 
@@ -106,4 +106,3 @@ public:
 	void moveConstVelocity(const float deltaTime);
 	void moveConstAcceleration(const float deltaTime);
 };
-

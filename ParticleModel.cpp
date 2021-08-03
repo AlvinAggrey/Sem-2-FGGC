@@ -1,20 +1,43 @@
 #include "ParticleModel.h"
 
 
-
-bool ParticleModel::CollisionCheck(Vector3 position, float radius)
+//Get Set
+void ParticleModel::SetBSphereRadius(float radius)
 {
-	Vector3 diff =  position - _transform->GetPosition();
-	float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
-	if (distance <= _boundingSphereRadius + radius)
-	{
-		return true;
-	}
-
-	return false;
+	_boundingSphereRadius = radius;
 }
 
-//get set
+void ParticleModel::SetBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ)
+{
+	_bBox.Set(bMinX, bMaxX, bMinY, bMaxY, bMinZ, bMaxZ);
+}
+
+float ParticleModel::GetBoundingSphereRadius()
+{
+	return _boundingSphereRadius;
+}
+
+Box& ParticleModel::GetBBox()
+{
+	return _bBox;
+}
+
+
+void ParticleModel::UseBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ)
+{
+	_bBox.Set(bMinX, bMaxX, bMinY, bMaxY, bMinZ, bMaxZ);
+	
+	_useBBox = true;
+	_useBSphere = false;
+}
+
+void ParticleModel::UseBSphere(float radius)
+{
+		_useBSphere = true;
+		_useBBox = false;
+}
+
+
 float ParticleModel::GetMass()
 {
 	return _mass;
@@ -42,6 +65,49 @@ void ParticleModel::SetThrust(float x, float y, float z)
 {
 	_thrust = Vector3(x, y, z);
 	_useThrust = true;
+}
+
+bool ParticleModel::CollisionCheck(Vector3 position, float radius)
+{
+	if (_useBSphere)
+	{
+		Vector3 diff =  position - _transform->GetPosition();
+		float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
+		if (distance <= _boundingSphereRadius + radius)
+		{
+			return true;
+		}
+	}
+	else if (_useBBox)
+	{
+		//if ()
+		//{
+
+		//}
+
+	}
+
+
+	return false;
+}
+bool ParticleModel::CollisionCheck(Vector3 position, Box box)
+{
+
+	//if (_useBSphere)
+	//{
+
+	//}
+	//else if (_useBBox)
+	//{
+	//	if (box.GetMinX <= box.GetMaxX && box.GetMaxX >= _bBox.GetMinX) &&
+	//		(a.minY <= b.maxY && a.maxY >= b.minY) &&
+	//		(a.minZ <= b.maxZ && a.maxZ >= b.minZ))
+	//	{
+
+	//	}
+
+	//}
+	return false;
 }
 
 void ParticleModel::DragForce(Vector3 velocity, float dragFactor)
