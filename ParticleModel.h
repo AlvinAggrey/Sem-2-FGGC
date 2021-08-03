@@ -11,6 +11,9 @@ private:
 	Vector3 _acceleration;
 	Vector3 _netForce;
 
+	//Collision Detection
+	float _boundingSphereRadius = 1;
+
 	//forces
 	Vector3 _thrust;
 	float _friction;
@@ -41,7 +44,17 @@ public:
 		_weight = Vector3(0, _mass * _gravity, 0);
 		_upForce = _weight;
 	};
+	//Collision Detection
+	void SetBoundingSphereRadius(float radius);
+	void SetBoundingBox();
 
+	float GetBoundingSphereRadius();
+	void GetBoundingBox();
+
+	void UseBoundingBox();
+	void UseBoundingSphere(float radius);
+
+	bool CollisionCheck(Vector3 position, float radius);
 	//Mass
 	float GetMass();
 	void SetMass(float mass);

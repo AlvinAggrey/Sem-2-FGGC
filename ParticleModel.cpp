@@ -2,6 +2,18 @@
 
 
 
+bool ParticleModel::CollisionCheck(Vector3 position, float radius)
+{
+	Vector3 diff =  position - _transform->GetPosition();
+	float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
+	if (distance <= _boundingSphereRadius + radius)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 //get set
 float ParticleModel::GetMass()
 {
@@ -168,8 +180,9 @@ void ParticleModel::Update(float t)
 	{
 		moveConstAcceleration(t);
 	}
+	//floor logic
 	if (/*_transform->GetPosition().x < 20 && _transform->GetPosition().x > -20  && _transform->GetPosition().z < -20
-		&& _transform->GetPosition().z > -20 &&*/ _transform->GetPosition().y < 0)
+		&& _transform->GetPosition().z > -20 &&*/ _transform->GetPosition().y <0)
 	{
 		Vector3 position = _transform->GetPosition();
 		position.y = 0;

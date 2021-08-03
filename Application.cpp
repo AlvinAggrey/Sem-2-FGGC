@@ -772,9 +772,19 @@ void Application::Update()
 	{
 
 		gameObject->Update(deltaTime);
+		for (int i = 0; i < _gameObjects.size(); i++)
+		{
+			if (_gameObjects[i] == gameObject)
+			{
+				continue;
+			}
+			gameObject->GetParticleModel()->CollisionCheck(_gameObjects[i]->, _gameObjects[i]->GetParticleModel()->GetBoundingSphereRadius());
+		}
+		//gameObject->CollisionCheck();
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}
 
+	//check for collisions
 	//debug.OutputLog(to_string(deltaTime));
 	/*string message = (to_string(_gameObjects[0]->GetParticleModel()->GetAcceleration().z));
 	debug.OutputLog(message)*/;
