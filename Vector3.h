@@ -21,6 +21,7 @@ public:
 	float Magnitude();
 	Vector3 DotProduct(Vector3 vector);
 	Vector3 CrossProduct(Vector3 vector);
+	void Clamp(float maxNumber);
 
 	//operator overloads
 	Vector3 operator*= (float);

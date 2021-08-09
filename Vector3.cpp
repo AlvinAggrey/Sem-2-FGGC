@@ -22,6 +22,22 @@ Vector3 Vector3::CrossProduct(Vector3 vector)
 	return Vector3((y * vector.z - vector.y * z), (z * vector.x - vector.z * x), (x * vector.y - vector.x * y));
 }
 
+void Vector3::Clamp(float maxNumber)
+{
+	if (x > maxNumber)
+	{
+		x = maxNumber;
+	}
+	if (y > maxNumber)
+	{
+		y = maxNumber;
+	}
+	if (z > maxNumber)
+	{
+		z = maxNumber;
+	}
+}
+
 //Vector operators
 Vector3 Vector3::operator*=(float scalar)
 {

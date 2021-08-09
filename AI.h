@@ -8,7 +8,7 @@ class AI
 private:
 	Transform* transform;
 	ParticleModel* particleModel;
-	float maxVelocity = 1;
+	float maxVelocity = 3;
 
 public:
 	AI();
@@ -16,7 +16,6 @@ public:
 	void Seek(Vector3 targetPosition);
 	void Flee(Vector3 avoidPosition);
 	void Arrival(Vector3 targetPosition);
-	void Wander();
 	
 	void ResetThrust();
 

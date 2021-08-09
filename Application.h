@@ -141,6 +141,7 @@ private:
 
 	AI autonomousAgent;
 
+	float speed = 4.0f;
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
@@ -152,6 +153,8 @@ private:
 
 	void moveForward(int objectNumber);
 	void moveBackward(int objectNumber);
+
+	void moveRight(int objectNumber);
 
 	Debug debug;
 	bool keyPressed = false;
@@ -168,6 +171,8 @@ public:
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
 	bool HandleKeyboard(MSG msg);
+
+	void moveLeft(int objectNumber);
 
 	void Update();
 	void Draw();

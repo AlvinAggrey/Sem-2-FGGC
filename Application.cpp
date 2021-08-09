@@ -158,7 +158,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	
 	//GameObject * gameObject;
 	GameObject * gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
-	gameObject->GetTransform()->SetPosition(0.0f, 0.0f, 0.0f);
+	gameObject->GetTransform()->SetPosition(0.0f, -0.5f, 0.0f);
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
@@ -185,6 +185,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
 	gameObject->GetTransform()->SetPosition(5.0f, 0.5f, 10.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	gameObject->GetParticleModel()->UseBSphere(3);
+
 	_gameObjects.push_back(gameObject);
 	
 	//gameObject = new GameObject(("Cube2"), cubeGeometry, shinyMaterial);
@@ -695,17 +697,20 @@ for (auto gameObject : _gameObjects)
 
 void Application::moveForward(int objectNumber)
 {
-	//Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
-	//position.z -= 0.02f;
-/*	_gameObjects[objectNumber]->GetTransform()->SetPosition(position)*/;
-	_gameObjects[objectNumber]->GetParticleModel()->SetThrust(Vector3(0,0,1));
+	_gameObjects[objectNumber]->GetParticleModel()->SetVelocity(Vector3(0,0,speed));
 }
 
 void Application::moveBackward(int objectNumber)
 {
-	Vector3 position = _gameObjects[objectNumber]->GetTransform()->GetPosition();
-	position.z += 0.02f;
-	_gameObjects[objectNumber]->GetTransform()->SetPosition(position);
+	_gameObjects[objectNumber]->GetParticleModel()->SetVelocity(Vector3(0, 0, -speed));
+}
+void Application::moveRight(int objectNumber)
+{
+	_gameObjects[objectNumber]->GetParticleModel()->SetVelocity(Vector3(speed, 0, 0));
+}
+void Application::moveLeft(int objectNumber)
+{
+	_gameObjects[objectNumber]->GetParticleModel()->SetVelocity(Vector3(-speed, 0, 0));
 }
 
 void Application::Update()
@@ -729,24 +734,30 @@ void Application::Update()
 		return;
 	}
 
-	// Move gameobject
-	if (GetAsyncKeyState('1'))
-	{
-		//moveForward(0);
-	}
-	if (GetAsyncKeyState('2'))
-	{
-		//moveForward(2);
-	}
+	//autonomousAgent.ResetThrust();
 
-	if (GetAsyncKeyState('3'))
+	// Move gameobject
+	//W
+	if (GetAsyncKeyState(0x57) & 0x0001)
 	{
-		//moveBackward(1);
+		moveForward(2);
 	}
-	if (GetAsyncKeyState('4'))
+	//A
+	if (GetAsyncKeyState(0x41) & 0x0001)
+	{
+		moveLeft(2);
+	}
+	//S
+	if (GetAsyncKeyState(0x53) & 0x0001)
 	{
 		moveBackward(2);
 	}
+	//D
+	if (GetAsyncKeyState(0x44) & 0x0001)
+	{
+		moveRight(2);
+	}
+
 
 	if (GetKeyState('1') & 0x0001)
 	{
@@ -816,12 +827,16 @@ void Application::Update()
 
 		}
 
-		if (gameObject->GetGameObjectType().compare("donut") == 0)
+		autonomousAgent.ResetThrust();
+
+		if (_gameObjects[1]->GetParticleModel()->CollisionCheck(_gameObjects[2]->GetTransform()->GetPosition(),_gameObjects[2]->GetParticleModel()->GetBSphereRadius()))
 		{
-			autonomousAgent.ResetThrust();
 			autonomousAgent.Flee(gameObject->GetTransform()->GetPosition());
-			autonomousAgent.Arrival(gameObject->GetTransform()->GetPosition());
 		}
+	
+		//autonomousAgent.Flee(gameObject->GetTransform()->GetPosition());
+		autonomousAgent.Arrival(_gameObjects[2]->GetTransform()->GetPosition());
+
 		//gameObject->CollisionCheck();
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}

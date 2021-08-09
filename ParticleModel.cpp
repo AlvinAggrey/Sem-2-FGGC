@@ -38,8 +38,9 @@ void ParticleModel::UseBBox()
 
 void ParticleModel::UseBSphere(float radius)
 {
-		_useBSphere = true;
-		_useBBox = false;
+	_boundingSphereRadius = radius;
+	_useBSphere = true;
+	_useBBox = false;
 }
 
 void ParticleModel::UseBSphere()
