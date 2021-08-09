@@ -3,6 +3,7 @@
 //Vector Computations
 Vector3 Vector3::Normalise()
 {
+	float magnitude = Magnitude();
 	return Vector3(x / magnitude , y / magnitude, z / magnitude);
 }
 
@@ -57,6 +58,14 @@ Vector3 Vector3::operator-(Vector3 vector)
 	sum = Vector3(this->x - vector.x, this->y - vector.y, this->z - vector.z);
 
 	return sum;
+}
+Vector3 Vector3::operator-()
+{
+	//return opposite of vector
+	Vector3 opposite;
+	opposite = Vector3(-x, -y, -z);
+
+	return	opposite;
 }
 
 Vector3 Vector3::operator*(float scalar)

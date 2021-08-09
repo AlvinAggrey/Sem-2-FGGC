@@ -73,7 +73,7 @@ float Box::GetMinY()
 	return minY;
 }
 
-float Box::GeMaxY()
+float Box::GetMaxY()
 {
 	return maxY;
 }

@@ -10,6 +10,12 @@ using namespace std;
 
 class Transform 
 {
+private:
+	Vector3 _position;
+	Vector3 _rotation;
+	Vector3 _scale;
+	XMFLOAT4X4 _world;
+
 public:
 	Transform(){}
 
@@ -30,10 +36,4 @@ public:
 	Vector3 GetRotation() const { return _rotation; }
 
 	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
-
-private:
-	Vector3 _position;
-	Vector3 _rotation;
-	Vector3 _scale;
-	XMFLOAT4X4 _world;
 };

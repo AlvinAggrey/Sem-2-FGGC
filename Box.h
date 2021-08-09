@@ -17,7 +17,7 @@ public:
 	float GetMinX();
 	float GetMaxX();
 	float GetMinY();
-	float GeMaxY();
+	float GetMaxY();
 	float GetMinZ();
 	float GetMaxZ();
 

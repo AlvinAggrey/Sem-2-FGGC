@@ -4,7 +4,7 @@
 class Vector3
 {
 private:
-	float magnitude = sqrtf((x * x) + (y * y) + (z * z));
+
 
 public:
 	float x = 0;
@@ -30,6 +30,7 @@ public:
 	Vector3 operator+= (Vector3);
 	Vector3 operator+ (Vector3);
 	Vector3 operator- (Vector3);
+	Vector3 operator-();
 	Vector3 operator* (float);
 	Vector3 operator* (Vector3);
 };

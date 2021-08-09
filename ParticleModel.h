@@ -18,6 +18,7 @@ private:
 	Box _bBox = Box();
 
 	//forces
+	bool _isStatic = false;
 	Vector3 _thrust;
 	float _friction;
 	float _dragFactor = 0.5;
@@ -32,7 +33,7 @@ private:
 	bool _useConstAccel;
 	bool _useLaminar;
 	bool _useThrust;
-	float _mass;
+	float _mass = 1;
 	Debug debug;
 
 public:
@@ -48,57 +49,61 @@ public:
 		_upForce = _weight;
 	};
 
-	//Collision Detection
+	//Set
 	void SetBSphereRadius(float radius);
 	void SetBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ);
-
-	float GetBoundingSphereRadius();
-	Box& GetBBox();
-
-	void UseBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ);
-	void UseBSphere(float radius);
-	
-	bool CollisionCheck(Vector3 position, float radius);
-	bool CollisionCheck(Vector3 position, float bMinX, float bMaxX, float bMinY, float bMaxY);
-	
-	//Physics
-	float GetMass();
-	void SetMass(float mass);
-
-	Vector3 GetThrust();
-
-	//void useThrust(bool useThrust);
-
 	void SetThrust(Vector3 thrust);
 	void SetThrust(float x, float y, float z);
-
-	float GetFriction();
+	void SetAcceleration(Vector3 accelaration);
+	void SetAcceleration(float x, float y, float z);
+	void SetMass(float mass);
 	void SetFriction();
-	
-	Vector3 GetDrag();
+	void SetUsingConstAccel(bool useConstAccel);
+	void SetVelocity(Vector3 velocity);
+	void SetVelocity(float x, float y, float z);
+	void SetBrakeForces(Vector3 brakeForces);
+	void SetBrakeForces(float x, float y, float z);
 	void SetDrag();
+	void SetIsStatic(bool isStatic);
 
+	//Get
+	Box& GetBBox();
+
+	float GetBSphereRadius();
+	float GetMass();
+	float GetFriction();
+
+	Vector3 GetThrust();
+	Vector3 GetDrag();
+	Vector3 GetBrakeForces();
+	Vector3 GetVelocity();
+	Vector3 GetAcceleration();
+
+	bool GetUsingConstAccel();
+	bool GetIsStatic();
+
+	//Collision Detection
+	void UseBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, float bMinZ, float bMaxZ);
+	void UseBBox();
+
+	void UseBSphere(float radius);
+	void UseBSphere();
+
+	bool CollisionCheckSpheres(Vector3 sphere1Position, float sphere1Radius, Vector3 sphere2Position, float sphere2Radius);
+	bool CollisionCheckBoxes(Vector3 box1Position, Box box1, Vector3 box2Position, Box box2);
+	bool CollisionCheckSphereAndBox(Vector3 spherePosition, float sphereRadius, Vector3 boxPosition, Box box);
+
+	bool CollisionCheck(Vector3 position, float radius);
+	bool CollisionCheck(Vector3 position, Box box);
+
+	float ClosestNumInNumRange(float rangeMin, float rangeMax, float targetNum);
+	
+	//Physics
+	//void useThrust(bool useThrust);
 	void DragForce(Vector3 velocity, float dragFactor);
 	void DragLamFlow(Vector3 velocity, float dragFactor);
 	void DragTurbFlow(Vector3 velocity, float dragFactor);
 
-	Vector3 GetBrakeForces();
-	void SetBrakeForces(Vector3 brakeForces);
-	void SetBrakeForces(float x, float y, float z);
-
-	Vector3 GetVelocity();
-	void SetVelocity(Vector3 velocity);
-	void SetVelocity(float x, float y, float z);
-
-	bool GetUsingConstAccel();
-	void SetUsingConstAccel(bool useConstAccel);
-
-	Vector3 GetAcceleration();
-	void SetAcceleration(Vector3 accelaration);
-	void SetAcceleration(float x, float y, float z);
-
-
-	//calculate external forces
 	void UpdateNetForce();
 	void UpdateAccel();
 

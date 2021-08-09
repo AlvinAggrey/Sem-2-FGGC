@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "AI.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -161,24 +162,50 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
-	gameObject->GetParticleModel()->UseBBox(-15, 15, -15, 15, -1, 1);
+	gameObject->GetParticleModel()->UseBBox(-15, 15, -1, 1, -10.0f, 10.0f);
+	gameObject->GetParticleModel()->SetIsStatic(true);
+
 
 	_gameObjects.push_back(gameObject);
 
-	for (auto i = 0; i < NUMBER_OF_CUBES; i++)
-	{
-		gameObject = new GameObject(("Cube" + to_string(i)), cubeGeometry, shinyMaterial);
-		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
-		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 
-		_gameObjects.push_back(gameObject);
-	}
-	//gameObject = new GameObject("Donut", herculesGeometry, shinyMaterial);
+	gameObject = new GameObject(("Cube1"), cubeGeometry, shinyMaterial);
+	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+	gameObject->GetTransform()->SetPosition(-4.0f, 1.5f, 10.0f);
+	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	gameObject->GetParticleModel()->UseBBox(-1, 1, -1, 1, -1, 1);
+	
+	autonomousAgent.SetParticleModel(gameObject->GetParticleModel());
+	autonomousAgent.SetTransform(gameObject->GetTransform());
+	
+	_gameObjects.push_back(gameObject);
+
+
+	gameObject = new GameObject("donut", herculesGeometry, shinyMaterial);
+	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+	gameObject->GetTransform()->SetPosition(5.0f, 0.5f, 10.0f);
+	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	_gameObjects.push_back(gameObject);
+	
+	//gameObject = new GameObject(("Cube2"), cubeGeometry, shinyMaterial);
 	//gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-	//gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
+	//gameObject->GetTransform()->SetPosition(-4.0f , 1.0f, 10.0f);
 	//gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	//gameObject->GetParticleModel()->UseBBox(-1, 1, -1, 1, -1, 1);
+
 	//_gameObjects.push_back(gameObject);
+	//for (auto i = 0; i < NUMBER_OF_CUBES; i++)
+	//{
+	//	gameObject = new GameObject(("Cube" + to_string(i)), cubeGeometry, shinyMaterial);
+	//	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
+	//	gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
+	//	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+	//	gameObject->GetParticleModel()->UseBBox(-5, 5, -1, 1, -1, 1);
+
+	//	_gameObjects.push_back(gameObject);
+	//}
+
+
 	return S_OK;
 }
 
@@ -769,27 +796,37 @@ void Application::Update()
 	_camera->SetPosition(cameraPos);
 	_camera->Update();
 
-	for (auto gameObjectOutter : _gameObjects)
+	for (auto gameObject : _gameObjects)
 	{
-
-		gameObjectOutter->Update(deltaTime);
+		gameObject->Update(deltaTime);
+		
 		for (auto gameObjectInner : _gameObjects)
 		{
-			if (gameObjectInner == gameObjectOutter)
+			if (gameObjectInner == gameObject)
 			{
 				continue;
 			}
 
-			if (gameObjectOutter->GetParticleModel()->CollisionCheck(gameObjectInner->GetTransform()->GetPosition(), gameObjectInner->GetParticleModel()->GetBoundingSphereRadius()))
+			if (gameObject->GetParticleModel()->CollisionCheck(gameObjectInner->GetTransform()->GetPosition(), gameObjectInner->GetParticleModel()->GetBBox()))
 			{
-				debug.OutputLog("Touching");
+				//debug.OutputLog(gameObject->GetGameObjectType() + " Touching " + gameObjectInner->GetGameObjectType());
+				//gameObjectOutter->GetParticleModel()->SetVelocity(gameObjectOutter->GetParticleModel()->GetVelocity());
 			}
 			//string message = (to_string());
-			
+
+		}
+
+		if (gameObject->GetGameObjectType().compare("donut") == 0)
+		{
+			autonomousAgent.ResetThrust();
+			autonomousAgent.Flee(gameObject->GetTransform()->GetPosition());
+			autonomousAgent.Arrival(gameObject->GetTransform()->GetPosition());
 		}
 		//gameObject->CollisionCheck();
 		//if (gameObject->GetGameObjectType().compare("Donut")){gameObject->Update(timeSinceStart);}
 	}
+
+
 
 	//check for collisions
 	//debug.OutputLog(to_string(deltaTime));

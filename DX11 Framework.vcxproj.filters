@@ -29,6 +29,7 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="AI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="AI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

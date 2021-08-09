@@ -32,6 +32,7 @@ public:
 	Appearance* GetAppearance() const { return _appearance; };
 	Transform* GetTransform () const { return _transform; };
 	ParticleModel* GetParticleModel() const { return _particleModel; };
+	
 
 	void SetParent(GameObject * parent) { _parent = parent; }
 

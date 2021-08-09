@@ -26,6 +26,7 @@
 #include "VertexTypes.h"
 */
 #include "GameObject.h"
+#include "AI.h"
 
 using namespace DirectX;
 
@@ -137,6 +138,8 @@ private:
 	Material shinyMaterial;
 
 	Material noSpecMaterial;
+
+	AI autonomousAgent;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

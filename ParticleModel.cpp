@@ -12,7 +12,7 @@ void ParticleModel::SetBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, 
 	_bBox.Set(bMinX, bMaxX, bMinY, bMaxY, bMinZ, bMaxZ);
 }
 
-float ParticleModel::GetBoundingSphereRadius()
+float ParticleModel::GetBSphereRadius()
 {
 	return _boundingSphereRadius;
 }
@@ -30,11 +30,22 @@ void ParticleModel::UseBBox(float bMinX, float bMaxX, float bMinY, float bMaxY, 
 	_useBBox = true;
 	_useBSphere = false;
 }
+void ParticleModel::UseBBox()
+{
+	_useBBox = true;
+	_useBSphere = false;
+}
 
 void ParticleModel::UseBSphere(float radius)
 {
 		_useBSphere = true;
 		_useBBox = false;
+}
+
+void ParticleModel::UseBSphere()
+{
+	_useBSphere = true;
+	_useBBox = false;
 }
 
 
@@ -67,47 +78,121 @@ void ParticleModel::SetThrust(float x, float y, float z)
 	_useThrust = true;
 }
 
-bool ParticleModel::CollisionCheck(Vector3 position, float radius)
+bool ParticleModel::CollisionCheckSpheres(Vector3 sphere1Position, float sphere1Radius, Vector3 sphere2Position, float sphere2Radius)
 {
-	if (_useBSphere)
+	Vector3 diff = sphere2Position - sphere1Position;
+	float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
+	if (distance <= sphere1Radius + sphere2Radius)
 	{
-		Vector3 diff =  position - _transform->GetPosition();
-		float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
-		if (distance <= _boundingSphereRadius + radius)
+		return true;
+	}
+
+	return false;
+}
+
+bool ParticleModel::CollisionCheckBoxes(Vector3 box1Position, Box box1, Vector3 box2Position, Box box2)
+{
+	Vector3 box2vertexes[8] = {
+		//vertices clockwise, top to bottom
+		//away from camera 
+		Vector3(box2Position.x + box2.GetMinX(), box2Position.y + box2.GetMaxY(), box2Position.z + box2.GetMaxZ()),
+		Vector3(box2Position.x + box2.GetMaxX(), box2Position.y + box2.GetMaxY(), box2Position.z + box2.GetMaxZ()),
+
+		Vector3(box2Position.x + box2.GetMinX(), box2Position.y + box2.GetMinY(), box2Position.z + box2.GetMaxZ()),
+		Vector3(box2Position.x + box2.GetMaxX(), box2Position.y + box2.GetMinY(), box2Position.z + box2.GetMaxZ()),
+
+
+		//toward camera
+		Vector3(box2Position.x + box2.GetMinX(), box2Position.y + box2.GetMaxY(), box2Position.z + box2.GetMinZ()),
+		Vector3(box2Position.x + box2.GetMaxX(), box2Position.y + box2.GetMaxY(), box2Position.z + box2.GetMinZ()),
+
+		Vector3(box2Position.x + box2.GetMinX(), box2Position.y + box2.GetMinY(), box2Position.z + box2.GetMinZ()),
+		Vector3(box2Position.x + box2.GetMaxX(), box2Position.y + box2.GetMinY(), box2Position.z + box2.GetMinZ())
+	};
+
+	Vector3 closestPoint = Vector3(ClosestNumInNumRange(box2Position.x + box2.GetMinX(), box2Position.x + box2.GetMaxX(), box1Position.x),
+		ClosestNumInNumRange(box2Position.y + box2.GetMinX(), box2Position.y + box2.GetMaxX(), box1Position.y),
+		ClosestNumInNumRange(box2Position.z + box2.GetMinX(), box2Position.z + box2.GetMaxX(), box1Position.z));
+
+	//check if any corners are in the box
+	for (Vector3 vertex : box2vertexes)
+	{
+		if (vertex.x >= box1Position.x + box1.GetMinX() && vertex.x <= box1Position.x + box1.GetMaxX() &&
+			vertex.y >= box1Position.y + box1.GetMinY() && vertex.y <= box1Position.y + box1.GetMaxY() &&
+			vertex.z >= box1Position.z + box1.GetMinZ() && vertex.z <= box1Position.z +  box1.GetMaxZ())
 		{
 			return true;
 		}
 	}
-	else if (_useBBox)
+	if ((closestPoint.x >= box1Position.x + box1.GetMinX() && closestPoint.x <= box1Position.x + box1.GetMaxX() &&
+		closestPoint.y >= box1Position.y + box1.GetMinY() && closestPoint.y <= box1Position.y + box1.GetMaxY() &&
+		closestPoint.z >= box1Position.z + box1.GetMinZ() && closestPoint.z <= box1Position.z + box1.GetMaxZ()))
 	{
-		//if ()
-		//{
-
-		//}
-
+		return true;
 	}
 
+	return false;
+}
+
+bool ParticleModel::CollisionCheckSphereAndBox(Vector3 spherePosition, float sphereRadius, Vector3 boxPosition, Box box)
+{
+	Vector3 closestPoint = Vector3(ClosestNumInNumRange(boxPosition.x + box.GetMinX(), boxPosition.x + box.GetMaxX(), spherePosition.x),
+									ClosestNumInNumRange(boxPosition.y + box.GetMinX(), boxPosition.y + box.GetMaxX(), spherePosition.y),
+									ClosestNumInNumRange(boxPosition.z + box.GetMinX(), boxPosition.z + box.GetMaxX(), spherePosition.z));
+
+	Vector3 diff = boxPosition - spherePosition;
+	float distance = sqrtf((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
+	if (distance <= sphereRadius)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool ParticleModel::CollisionCheck(Vector3 position, float radius)
+{
+	if (_useBSphere)
+	{
+		return CollisionCheckSpheres(_transform->GetPosition(), _boundingSphereRadius, position, radius);
+	}
+	else if (_useBBox)
+	{
+		return CollisionCheckSphereAndBox(position, radius, _transform->GetPosition(), _bBox);
+	}
 
 	return false;
 }
 bool ParticleModel::CollisionCheck(Vector3 position, Box box)
 {
+	if (_useBSphere)
+	{
+		return CollisionCheckSphereAndBox(_transform->GetPosition(), _boundingSphereRadius, position, box);
+	}
+	else if (_useBBox)
+	{
+		return CollisionCheckBoxes(_transform->GetPosition(), _bBox, position, box);
+	}
 
-	//if (_useBSphere)
-	//{
-
-	//}
-	//else if (_useBBox)
-	//{
-	//	if (box.GetMinX <= box.GetMaxX && box.GetMaxX >= _bBox.GetMinX) &&
-	//		(a.minY <= b.maxY && a.maxY >= b.minY) &&
-	//		(a.minZ <= b.maxZ && a.maxZ >= b.minZ))
-	//	{
-
-	//	}
-
-	//}
 	return false;
+}
+
+float ParticleModel::ClosestNumInNumRange(float rangeMin, float rangeMax, float targetNum)
+{
+	//bigger than numbers in the range then the smallest number is closest, and vice versa
+	if (targetNum >= rangeMax)
+	{
+		return rangeMax;
+	}
+	else if (targetNum <= rangeMin)
+	{
+		return rangeMin;
+	}
+	//if not then the targetNum if within range
+	else
+	{
+		return targetNum;
+	}
 }
 
 void ParticleModel::DragForce(Vector3 velocity, float dragFactor)
@@ -156,6 +241,10 @@ void ParticleModel::SetBrakeForces(float x, float y, float z)
 	_brakeForces.y = y;
 	_brakeForces.z = z;
 }
+void ParticleModel::SetIsStatic(bool isStatic)
+{
+	_isStatic = isStatic;
+}
 Vector3 ParticleModel::GetVelocity()
 {
 	return _velocity;
@@ -175,6 +264,11 @@ void ParticleModel::SetVelocity(float x, float y, float z)
 bool ParticleModel::GetUsingConstAccel()
 {
 	return _useConstAccel;
+}
+
+bool ParticleModel::GetIsStatic()
+{
+	return _isStatic;
 }
 
 void ParticleModel::SetUsingConstAccel(bool usingConstAccel)
@@ -218,7 +312,7 @@ void ParticleModel::UpdateNetForce()
 	_netForce += _drag -_weight;
 
 
-	debug.OutputLog("Magnitude: " + to_string(_transform->GetPosition().Magnitude()));
+	//debug.OutputLog("Magnitude: " + to_string(_transform->GetPosition().Magnitude()));
 	//debug.OutputLog("_netForce X: " + to_string(_netForce.x) + " Y: " + to_string(_netForce.y) + " Z: " + to_string(_netForce.z));
 	//debug.OutputLog("position X: " + to_string(_transform->GetPosition().x) + " Y: " + to_string(_transform->GetPosition().y) + " Z: " + to_string(_transform->GetPosition().z));
 	//debug.OutputLog("acceleration X: " + to_string(_acceleration.x) + " Y: " + to_string(_acceleration.y) + " Z: " + to_string(_acceleration.z));
@@ -236,25 +330,29 @@ void ParticleModel::UpdateAccel()
 
 void ParticleModel::Update(float t)
 {
-	UpdateNetForce();
-	UpdateAccel();
-	if (_useConstAccel == false)
+	if (!_isStatic)
 	{
-		moveConstVelocity(t);
+		UpdateNetForce();
+		UpdateAccel();
+		if (_useConstAccel == false)
+		{
+			moveConstVelocity(t);
+		}
+		else if (_useConstAccel)
+		{
+			moveConstAcceleration(t);
+		}
+		//floor logic
+		if (/*_transform->GetPosition().x < 20 && _transform->GetPosition().x > -20  && _transform->GetPosition().z < -20
+			&& _transform->GetPosition().z > -20 &&*/ _transform->GetPosition().y <0)
+		{
+			Vector3 position = _transform->GetPosition();
+			position.y = 0;
+			_velocity.y = 0;
+			_transform->SetPosition(position);
+		}
 	}
-	else if (_useConstAccel)
-	{
-		moveConstAcceleration(t);
-	}
-	//floor logic
-	if (/*_transform->GetPosition().x < 20 && _transform->GetPosition().x > -20  && _transform->GetPosition().z < -20
-		&& _transform->GetPosition().z > -20 &&*/ _transform->GetPosition().y <0)
-	{
-		Vector3 position = _transform->GetPosition();
-		position.y = 0;
-		_velocity.y = 0;
-		_transform->SetPosition(position);
-	}
+
 }
 
 void ParticleModel::moveConstVelocity(const float deltaTime)
